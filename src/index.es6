@@ -1,7 +1,40 @@
 import './style.css';
+import './progress.css';
 import $ from '../static/jquery-3.0.0.js';
 
+(function() {
+  $.fn.extend({
+    progress: function(obj) {
+      obj = obj || {};
+      $(this).addClass('__progress');
+      $(this).width(obj.width || 100);
+      $(this).height(obj.height || 4);
+      $(this).css('background', obj.bgColor || 'white');
+      $(this).css('border-left', `${obj.defaultPos || 0}px solid ${obj.forColor || 'lightgreen'}`);
+      const startPos = $(this).offset().left;
+      const endPos = $(this).offset().left + $(this).width();
+      $(this).on('click', (evt) => {
+        const activeLeng = evt.pageX - startPos;
+        $(this).css('border-left-width', `${activeLeng}px`);
+        if (typeof obj.handleClick === 'function') {
+          obj.handleClick((activeLeng / $(this).outerWidth()).toFixed(1));
+        }
+      });
+      return this.each(function(){
+        return $(this);
+      })
+    },
+  });
+})();
+
 (function(){
+  $('.js-vols').progress({
+    width: 90,
+    bgColor: 'white',
+    forColor: 'red',
+    defaultPos: 90,
+    handleClick: changeVol
+  });
   const musicList = [
     { name:'DJ - Melody from heaven.mp3', src: './music'},
     { name:'Dragon Rider.mp3', src: './music'},
@@ -46,6 +79,10 @@ import $ from '../static/jquery-3.0.0.js';
   $('.js-vol').on('click', '.xm-quite', () => {
     handleQuite(false)
   })
+
+  function changeVol(vol) {
+    defaultVol = playerDom.volume = vol;
+  }
 
   function handleQuite(quite) {
     if (quite) {
