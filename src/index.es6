@@ -3,28 +3,69 @@ import $ from '../static/jquery-3.0.0.js';
 
 (function(){
   const musicList = [
-    { id: 1, name:'DJ - Melody from heaven.mp3', src: './music'},
-    { id: 2, name:'Dragon Rider.mp3', src: './music'},
-    { id: 3, name:'Enya - Amarantine.mp3', src: './music'},
-    { id: 4, name:'Era - The Mass.mp3', src: './music'},
+    { name:'DJ - Melody from heaven.mp3', src: './music'},
+    { name:'Dragon Rider.mp3', src: './music'},
+    { name:'Enya - Amarantine.mp3', src: './music'},
+    { name:'Era - The Mass.mp3', src: './music'},
   ]
+
+  const playerDom = document.getElementsByTagName('audio')[0];
   initList($('.m-list ul'), musicList);
 
+  // open or hide player
   $('.info .xm-more').on('click', () => {
     $('.player').toggleClass('hide');
-  })
+  });
 
-  function initPlayer(info, audio) {
+  // prev play pause next and stop player
+  $('.js-ctr').on('click', '.xm-prev', (evt) => {
+    switchMusic($('.m-list li.active').index(), -1);
+  });
+  $('.js-ctr').on('click', '.xm-pause', (evt) => {
+    handlePlay(false);
+    playerDom.pause();
+  });
+  $('.js-ctr').on('click', '.xm-play', (evt) => {
+    handlePlay(true);
+    playerDom.play();
+  });
+  $('.js-ctr').on('click', '.xm-next', (evt) => {
+    switchMusic($('.m-list li.active').index(), 1);
+  });
+  $('.js-ctr').on('click', '.xm-stop', (evt) => {
+    playerDom.currentTime = 0;
+    playerDom.pause();
+    handlePlay(false);
+  });
+
+  function handlePlay(play) {
+    if(play) {
+      $('.js-play').addClass('xm-pause').removeClass('xm-play');
+    } else {
+      $('.js-play').addClass('xm-play').removeClass('xm-pause');
+    }
+  }
+
+  function switchMusic(curr, next) {
+    const listLength = $('.m-list ul li').length; //曲目条数
+    if ((curr < listLength - 1 && next > 0) || (curr > 0 && next < 0) ) {
+      const nextStep = curr + next;
+      playerDom.setAttribute('src', `${musicList[nextStep].src}/${musicList[nextStep].name}`)
+      $('.m-list li.active').removeClass('active').closest('ul').find('li').eq(nextStep).addClass('active');
+      handlePlay(true);
+      playerDom.play();
+    }
+  }
+
+  function initPlayer(audio) {
     const l = decodeURIComponent(audio.src).split('/');
     const musicName = l[l.length - 1];
     const musicDuration = formatSeconds(audio.duration);
-    $('.m-list li').each((i, item) => {
-      if ($(item).data('id') === info.id) {
-        $(item).addClass('active');
-        $('.pro .time-dura').html(musicDuration);
-        $('.pro marquee').html(musicName);
-      }
-    })
+    $('.m-list li').eq(0).addClass('active');
+    $('.pro .time-dura').html(musicDuration);
+    $('.pro marquee').html(musicName);
+    $('.m-operate').append(audio);
+    playerDom.setAttribute('src',audio.getAttribute('src'));
   }
 
   function initList($list, mList) {
@@ -32,9 +73,9 @@ import $ from '../static/jquery-3.0.0.js';
       const audio = document.createElement('audio');
       audio.setAttribute('src', `${item.src}/${item.name}`);
       audio.addEventListener("canplay", function(){
-        $('.m-list ul').append(`<li data-id='${item.id}'>${item.name}<span>${formatSeconds(audio.duration)}</span></li>`)
+        $('.m-list ul').append(`<li>${item.name}<span>${formatSeconds(audio.duration)}</span></li>`)
         if (index === 0) {
-          initPlayer(item, audio);
+          initPlayer(audio);
         }
       });
     });
