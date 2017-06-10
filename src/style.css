@@ -14,10 +14,17 @@ body {
   height: 300px;
   min-width: 600px;
   width: 72%;
+  transition: top 0.2s ease-in;
   box-shadow: 0 0 2px #a20c0c;
   overflow: hidden;
   display: flex;
   justify-content: space-between;
+}
+.player.hide {
+  top: calc(-0.85 * 300px);
+}
+.player .xmusic:hover {
+  cursor: pointer;
 }
 .pler-left {
   width: 39.5%;

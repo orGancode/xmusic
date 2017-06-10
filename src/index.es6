@@ -10,6 +10,10 @@ import $ from '../static/jquery-3.0.0.js';
   ]
   initList($('.m-list ul'), musicList);
 
+  $('.info .xm-more').on('click', () => {
+    $('.player').toggleClass('hide');
+  })
+
   function initPlayer(info, audio) {
     const l = decodeURIComponent(audio.src).split('/');
     const musicName = l[l.length - 1];
@@ -35,6 +39,7 @@ import $ from '../static/jquery-3.0.0.js';
       });
     });
   }
+
   function formatSeconds(sec, type) {
     const hours = parseInt(sec / 3600);
     const min = parseInt((sec % 3600) / 60);
@@ -44,4 +49,6 @@ import $ from '../static/jquery-3.0.0.js';
     }
     return (type).replace('H', hours).replace('M', min).replace('S', second);
   }
+
+
 })();
