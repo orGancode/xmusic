@@ -27,6 +27,9 @@ module.exports = {
     ]
   },
   plugins: [
+    new CopyWebpackPlugin([
+      { from: __dirname + '/src/music', to: __dirname + '/public/music' }
+    ]),
     new HtmlWebpackPlugin({
       template: 'html-withimg-loader!' + __dirname + "/src/index.html"
     }),
