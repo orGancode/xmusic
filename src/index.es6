@@ -17,7 +17,7 @@ import $ from '../static/jquery-3.0.0.js';
         const activeLeng = evt.pageX - startPos;
         $(this).css('border-left-width', `${activeLeng}px`);
         if (typeof obj.handleClick === 'function') {
-          obj.handleClick((activeLeng / $(this).outerWidth()).toFixed(1));
+          obj.handleClick(activeLeng / $(this).outerWidth());
         }
       });
       return this.each(function(){

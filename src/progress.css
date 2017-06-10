@@ -2,7 +2,20 @@
   height: 4px;
   background: white;
   box-sizing: border-box;
+  display: inline-block;
+  position: relative;
+  transition: all 0.1s;
 }
+.__progress:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -3px;
+  height: 10px;
+  width: 2px;
+  background: gray;
+}
+
 .__progress:hover {
-  cursor: pointer;
+  cursor: text;
 }
