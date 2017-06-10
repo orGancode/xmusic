@@ -8,8 +8,9 @@ import $ from '../static/jquery-3.0.0.js';
     { name:'Enya - Amarantine.mp3', src: './music'},
     { name:'Era - The Mass.mp3', src: './music'},
   ]
-
+  // 获取页面唯一的播放器
   const playerDom = document.getElementsByTagName('audio')[0];
+  let defaultVol = 1;
   initList($('.m-list ul'), musicList);
 
   // open or hide player
@@ -37,6 +38,24 @@ import $ from '../static/jquery-3.0.0.js';
     playerDom.pause();
     handlePlay(false);
   });
+
+  // quite volume
+  $('.js-vol').on('click', '.xm-voice', () => {
+    handleQuite(true)
+  })
+  $('.js-vol').on('click', '.xm-quite', () => {
+    handleQuite(false)
+  })
+
+  function handleQuite(quite) {
+    if (quite) {
+      playerDom.volume = 0;
+      $('.js-vol .xmusic').addClass('xm-quite').removeClass('xm-voice');
+    } else {
+      playerDom.volume = defaultVol;
+      $('.js-vol .xmusic').addClass('xm-voice').removeClass('xm-quite');
+    }
+  }
 
   function handlePlay(play) {
     if(play) {
@@ -66,6 +85,7 @@ import $ from '../static/jquery-3.0.0.js';
     $('.pro marquee').html(musicName);
     $('.m-operate').append(audio);
     playerDom.setAttribute('src',audio.getAttribute('src'));
+    defaultVol = playerDom.volume;
   }
 
   function initList($list, mList) {
