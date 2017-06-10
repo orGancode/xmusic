@@ -37,18 +37,22 @@ body {
 }
 .m-list ul {
   margin: 0;
-  padding: 0;
+  padding: 0 10px;
 }
 .m-list ul li {
   margin: 0;
   padding: 2px 4px;
   list-style: none;
   color: white;
+  border-radius: 4px;
 }
 .m-list ul li:hover {
   background: #aaa;
   color: black;
   cursor: pointer;
+}
+.m-list ul li.active {
+  background: #a20c0c;
 }
 .m-list li span {
   float: right;
@@ -96,5 +100,37 @@ body {
 }
 .pler-right .pro{
   background: #a20c0c;
+  color: white;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.pro .time,
+.pro .info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.pro .info .name {
+  display: inline-block;
+  width: 50%;
 }
 
+.pro .info .info-op {
+  display: flex;
+  width: 75px;
+  justify-content: space-around;
+}
+
+.pro .time > span {
+  font-size: 14px;
+}
+
+.pro .time .time-pro {
+  display: inline-block;
+  width: 75%;
+  height: 3px;
+  background: white;
+}
