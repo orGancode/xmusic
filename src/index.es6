@@ -35,26 +35,22 @@ import $ from '../static/jquery-3.0.0.js';
 
 
       if (obj.play) {
-        this._pause = false;
         this.play = (time) => {
           this._during = time;
           this._speed = $prog.width() / this._during;
-          if (!this._pause) {
-            this._runCount = setInterval(() => {
-              this._curring += this._speed;
-              $progCate.width(this._curring);
-            }, 1000);
-          }
+          this._runCount = setInterval(() => {
+            this._curring += this._speed;
+            $progCate.width(this._curring);
+          }, 1000);
         }
         this.pause = (curr) => {
           this._curring = (curr / this._during) * $prog.outerWidth();
-          this._pause = true;
           clearInterval(this._runCount);
         }
         this.reset = (time) => {
           this._curring = 0;
-          clearInterval(this._runCount);
           $progCate.width(0);
+          clearInterval(this._runCount);
           if (time) {
             this.play(time);
           }
@@ -207,7 +203,7 @@ import $ from '../static/jquery-3.0.0.js';
     switch(currMode) {
       case 0:
         if (next) {
-          nextStep = curr <= 0
+          nextStep = curr === 0
                      ? next > 0 ? curr + 1 : listLength - 1
                      : curr >= listLength -1
                        ? next > 0 ? 0 : curr -1
@@ -215,12 +211,14 @@ import $ from '../static/jquery-3.0.0.js';
         } else {
           if (curr >= listLength - 1) {
             stop = true;
+          } else {
+            nextStep = curr + 1
           }
         }
         break;
       case 1:
         if (next) {
-          nextStep = curr <= 0
+          nextStep = curr === 0
                      ? next > 0 ? curr + 1 : listLength - 1
                      : curr >= listLength - 1
                        ? next > 0 ? 0 : curr -1
