@@ -68,7 +68,7 @@ body {
 .pro {
   width: 100%;
   height: 15%;
-  background: black;
+  background: linear-gradient(90deg,#1c1717 20%, #4a3434 47%, #181818 89%);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -107,7 +107,7 @@ body {
   background: #afafaf;
 }
 .pler-right .pro{
-  background: #a20c0c;
+  background: linear-gradient(to right, #1c1717 10%, #967e7e 56%, #181818 100%);
   color: white;
   flex-direction: column;
   justify-content: space-around;

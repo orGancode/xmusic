@@ -71,7 +71,7 @@ import $ from '../static/jquery-3.0.0.js';
   $('.js-vols').progress({
     width: 90,
     bgColor: 'white',
-    forColor: 'red',
+    forColor: '#03c3f5',
     defaultPos: 90,
     handleClick: changeVol
   });
