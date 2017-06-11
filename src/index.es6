@@ -5,7 +5,13 @@ import $ from '../static/jquery-3.0.0.js';
 (function() {
   $.fn.extend({
     progress: function(obj) {
-      obj = obj || {};
+      if (!$(this)) { return }
+      this._curring = 0;
+      this._during = 0;
+      this._runCount = '';
+      this._speed = 0;
+      this._pause = true;
+
       $(this).addClass('__progress');
       $(this).width(obj.width || 100);
       $(this).height(obj.height || 4);
@@ -17,9 +23,31 @@ import $ from '../static/jquery-3.0.0.js';
         const activeLeng = evt.pageX - startPos;
         $(this).css('border-left-width', `${activeLeng}px`);
         if (typeof obj.handleClick === 'function') {
+          this._curring = activeLeng;
           obj.handleClick(activeLeng / $(this).outerWidth());
         }
       });
+
+
+      if (obj.play) {
+        this.play = (time) => {
+          this._during = time;
+          this._speed = $(this).width() / this._during;
+          this._pause = false;
+          const run = ()=>{
+            if (!this._pause) {
+              this._curring += this._speed;
+              $(this).css('border-left-width', `${this._curring}px`);
+              setTimeout(run, 1000);
+            }
+          }
+          setTimeout(run, 1000);
+        }
+        this.pause = (curr) => {
+          this._curring = (curr / this._during) * $(this).outerWidth();
+          this._pause = true;
+        }
+      }
       return this.each(function(){
         return $(this);
       })
@@ -34,6 +62,14 @@ import $ from '../static/jquery-3.0.0.js';
     forColor: 'red',
     defaultPos: 90,
     handleClick: changeVol
+  });
+  const time = $('.time-pro').progress({
+    width: '80%',
+    bgColor: 'white',
+    forColor: 'black',
+    defaultPos: 0,
+    handleClick: changeCurrTime,
+    play: true,
   });
   const musicList = [
     { name:'DJ - Melody from heaven.mp3', src: './music'},
@@ -58,10 +94,12 @@ import $ from '../static/jquery-3.0.0.js';
   $('.js-ctr').on('click', '.xm-pause', (evt) => {
     handlePlay(false);
     playerDom.pause();
+    time.pause(playerDom.currentTime);
   });
   $('.js-ctr').on('click', '.xm-play', (evt) => {
     handlePlay(true);
     playerDom.play();
+    time.play(playerDom.duration);
   });
   $('.js-ctr').on('click', '.xm-next', (evt) => {
     switchMusic($('.m-list li.active').index(), 1);
@@ -82,6 +120,10 @@ import $ from '../static/jquery-3.0.0.js';
 
   function changeVol(vol) {
     defaultVol = playerDom.volume = vol;
+  }
+
+  function changeCurrTime(pos) {
+    playerDom.currentTime = playerDom.duration * pos;
   }
 
   function handleQuite(quite) {
