@@ -87,6 +87,12 @@ import $ from '../static/jquery-3.0.0.js';
     const name = $(item).data('src').split('/').pop();
     musicList.push({ name, src });
   });
+
+  $('.m-list ul').on('dblclick', 'li', (evt) => {
+    $(evt.currentTarget).addClass('active').siblings().removeClass('active');
+    switchMusic($(evt.currentTarget).index(), 0, $(evt.currentTarget).index());
+  });
+
   // 获取页面唯一的播放器
   const playerDom = document.getElementsByTagName('audio')[0];
   let defaultVol = 1;
@@ -195,7 +201,7 @@ import $ from '../static/jquery-3.0.0.js';
 
   }
 
-  function switchMusic(curr, next) {
+  function switchMusic(curr, next, force) {
     const listLength = $('.m-list ul li').length; //曲目条数
     let nextStep = 0;
     let stop = false;
@@ -241,6 +247,10 @@ import $ from '../static/jquery-3.0.0.js';
           nextStep = curr;
         }
         break;
+    }
+    if (typeof force === 'number') {
+      nextStep = force;
+      stop = false;
     }
 
     if (!stop) {
