@@ -13,18 +13,23 @@ import $ from '../static/jquery-3.0.0.js';
       this._pause = true;
 
       $(this).addClass('__progress');
-      $(this).width(obj.width || 100);
-      $(this).height(obj.height || 4);
-      $(this).css('background', obj.bgColor || 'white');
-      $(this).css('border-left', `${obj.defaultPos || 0}px solid ${obj.forColor || 'lightgreen'}`);
-      const startPos = $(this).offset().left;
-      const endPos = $(this).offset().left + $(this).width();
-      $(this).on('click', (evt) => {
+      $(this).append('<span class="cate"></span>');
+
+      const $prog = $(this);
+      const $progCate = $(this).find('.cate');
+      $prog.width(obj.width || 100);
+      $prog.height(obj.height || 4);
+      $prog.css('background', obj.bgColor || 'white');
+      $progCate.width(obj.defaultPos);
+      $progCate.css('background', obj.forColor || 'red');
+      const startPos = $prog.offset().left;
+      const endPos = $prog.offset().left + $prog.width();
+      $prog.on('click', (evt) => {
         const activeLeng = evt.pageX - startPos;
-        $(this).css('border-left-width', `${activeLeng}px`);
+        $progCate.width(activeLeng);
         if (typeof obj.handleClick === 'function') {
           this._curring = activeLeng;
-          obj.handleClick(activeLeng / $(this).outerWidth());
+          obj.handleClick(activeLeng / $prog.width());
         }
       });
 
@@ -32,24 +37,31 @@ import $ from '../static/jquery-3.0.0.js';
       if (obj.play) {
         this.play = (time) => {
           this._during = time;
-          this._speed = $(this).width() / this._during;
+          this._speed = $prog.width() / this._during;
           this._pause = false;
           const run = ()=>{
             if (!this._pause) {
               this._curring += this._speed;
-              $(this).css('border-left-width', `${this._curring}px`);
+              $progCate.width(this._curring);
               setTimeout(run, 1000);
             }
           }
-          setTimeout(run, 1000);
+          run();
         }
         this.pause = (curr) => {
-          this._curring = (curr / this._during) * $(this).outerWidth();
+          this._curring = (curr / this._during) * $prog.outerWidth();
           this._pause = true;
+        }
+        this.reset = (time) => {
+          this._curring = 0;
+          $progCate.width(0);
+          if (time) {
+            this.play(time);
+          }
         }
       }
       return this.each(function(){
-        return $(this);
+        return $prog;
       })
     },
   });
@@ -63,7 +75,7 @@ import $ from '../static/jquery-3.0.0.js';
     defaultPos: 90,
     handleClick: changeVol
   });
-  const time = $('.time-pro').progress({
+  const progress = $('.time-pro').progress({
     width: '80%',
     bgColor: 'white',
     forColor: 'black',
@@ -80,6 +92,7 @@ import $ from '../static/jquery-3.0.0.js';
   // 获取页面唯一的播放器
   const playerDom = document.getElementsByTagName('audio')[0];
   let defaultVol = 1;
+  let timeInterval = '';
   initList($('.m-list ul'), musicList);
 
   // open or hide player
@@ -94,12 +107,14 @@ import $ from '../static/jquery-3.0.0.js';
   $('.js-ctr').on('click', '.xm-pause', (evt) => {
     handlePlay(false);
     playerDom.pause();
-    time.pause(playerDom.currentTime);
+    progress.pause(playerDom.currentTime);
+    timeRuning(false);
   });
   $('.js-ctr').on('click', '.xm-play', (evt) => {
     handlePlay(true);
     playerDom.play();
-    time.play(playerDom.duration);
+    progress.play(playerDom.duration);
+    timeRuning(true);
   });
   $('.js-ctr').on('click', '.xm-next', (evt) => {
     switchMusic($('.m-list li.active').index(), 1);
@@ -108,6 +123,7 @@ import $ from '../static/jquery-3.0.0.js';
     playerDom.currentTime = 0;
     playerDom.pause();
     handlePlay(false);
+    progress.reset();
   });
 
   // quite volume
@@ -124,6 +140,17 @@ import $ from '../static/jquery-3.0.0.js';
 
   function changeCurrTime(pos) {
     playerDom.currentTime = playerDom.duration * pos;
+    $('.time-curr').html(formatSeconds(playerDom.currentTime));
+  }
+
+  function timeRuning(toRun) {
+    if (toRun) {
+      timeInterval = setInterval(() => {
+        $('.time-curr').html(formatSeconds(playerDom.currentTime))
+      }, 500);
+    } else {
+      clearInterval(timeInterval);
+    }
   }
 
   function handleQuite(quite) {
@@ -152,6 +179,7 @@ import $ from '../static/jquery-3.0.0.js';
       $('.m-list li.active').removeClass('active').closest('ul').find('li').eq(nextStep).addClass('active');
       handlePlay(true);
       playerDom.play();
+      progress.reset(playerDom.duration);
     }
   }
 
@@ -187,11 +215,14 @@ import $ from '../static/jquery-3.0.0.js';
   }
 
   function formatSeconds(sec, type) {
-    const hours = parseInt(sec / 3600);
-    const min = parseInt((sec % 3600) / 60);
-    const second = parseInt(sec % 60);
+    let hours = parseInt(sec / 3600);
+    let min = parseInt((sec % 3600) / 60);
+    let second = parseInt(sec % 60);
+    hours = hours < 10 ? `0${hours}` : hours;
+    min = min < 10 ? `0${min}` : min;
+    second = second < 10 ? `0${second}` : second;
     if (!type) {
-      return hours === 0 ? `${min}:${second}` : `${hours}:${min}:${second}`
+      return hours === '00' ? `${min}:${second}` : `${hours}:${min}:${second}`
     }
     return (type).replace('H', hours).replace('M', min).replace('S', second);
   }

@@ -3,13 +3,20 @@
   background: white;
   box-sizing: border-box;
   display: inline-block;
-  position: relative;
-  transition: all 0.1s;
+  display: flex;
 }
-.__progress:before {
+.__progress .cate {
+  display: inline-block;
+  position: relative;
+  height: 4px;
+  width: 0px;
+  transition: left 0.1s;
+}
+
+.__progress .cate:after {
   content: "";
   position: absolute;
-  left: 0;
+  right: 0;
   top: -3px;
   height: 10px;
   width: 2px;

@@ -134,6 +134,9 @@ body {
 
 .pro .time > span {
   font-size: 14px;
+  width: 8%;
+  min-width: 60px;
+  text-align: center;
 }
 
 
