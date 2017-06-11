@@ -118,11 +118,17 @@ import $ from '../static/jquery-3.0.0.js';
     const musicName = l[l.length - 1];
     const musicDuration = formatSeconds(audio.duration);
     $('.m-list li').eq(0).addClass('active');
-    $('.pro .time-dura').html(musicDuration);
-    $('.pro marquee').html(musicName);
+    initTimeProgress(musicName, musicDuration);
     $('.m-operate').append(audio);
     playerDom.setAttribute('src',audio.getAttribute('src'));
     defaultVol = playerDom.volume;
+    playerDom.addEventListener('ended', () => switchMusic($('.m-list li.active').index(), 1));
+  }
+
+
+  function initTimeProgress(name, duration) {
+    $('.pro .time-dura').html(duration);
+    $('.pro marquee').html(name);
   }
 
   function initList($list, mList) {
